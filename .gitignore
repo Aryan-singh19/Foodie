@@ -48,6 +48,11 @@ dump.rdb
 
 # Python
 __pycache__/
+
+# Android Build artifacts
+apk_build/
+*.idsig
+debug.keystore
 *pyc*
 venv/
 .venv/

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Trash2, Plus, Minus, Bike, MapPin, User, Phone, ArrowRight, ShoppingBag } from 'lucide-react';
 import { CartItem, Order } from '../types.js';
+import { ApiClient } from '../data/apiClient.js';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -69,23 +70,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
         customer_phone: customerPhone.trim(),
       };
 
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderPayload),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.detail || 'Failed to place order');
-      }
-
-      const createdOrder: Order = await res.json();
+      const createdOrder = await ApiClient.createOrder(orderPayload);
       onClearCart();
       onClose();
       onOrderCreated(createdOrder);
     } catch (err: any) {
-      setErrorMsg(err.message || 'Network error placing order');
+      setErrorMsg(err.message || 'Error placing order');
     } finally {
       setIsSubmitting(false);
     }

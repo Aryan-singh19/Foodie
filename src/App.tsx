@@ -8,6 +8,7 @@ import { CartDrawer } from './components/CartDrawer.js';
 import { OrderTrackerModal } from './components/OrderTrackerModal.js';
 import { GithubSyncModal } from './components/GithubSyncModal.js';
 import { Restaurant, MenuItem, CartItem, Order } from './types.js';
+import { ApiClient } from './data/apiClient.js';
 import { Store, Utensils, AlertCircle, ShoppingBag } from 'lucide-react';
 
 export const App: React.FC = () => {
@@ -68,10 +69,9 @@ export const App: React.FC = () => {
 
   // Fetch cuisines list once
   useEffect(() => {
-    fetch('/api/cuisines')
-      .then((res) => (res.ok ? res.json() : ['All']))
+    ApiClient.getCuisines()
       .then((data) => setCuisines(data))
-      .catch((err) => console.error('Error fetching cuisines:', err));
+      .catch(() => setCuisines(['All']));
   }, []);
 
   // Fetch restaurants based on search & cuisine
@@ -79,20 +79,10 @@ export const App: React.FC = () => {
     setIsLoading(true);
     setFetchError(null);
     try {
-      const params = new URLSearchParams();
-      if (selectedCuisine && selectedCuisine !== 'All') {
-        params.append('cuisine', selectedCuisine);
-      }
-      if (searchQuery.trim()) {
-        params.append('search', searchQuery.trim());
-      }
-
-      const res = await fetch(`/api/restaurants?${params.toString()}`);
-      if (!res.ok) throw new Error('Failed to load restaurants');
-      const data: Restaurant[] = await res.json();
+      const data = await ApiClient.getRestaurants(selectedCuisine, searchQuery);
       setRestaurants(data);
     } catch (err: any) {
-      setFetchError(err.message || 'Error fetching restaurant list');
+      setFetchError(err.message || 'Error loading restaurant catalog');
     } finally {
       setIsLoading(false);
     }
@@ -105,9 +95,8 @@ export const App: React.FC = () => {
   // Open restaurant details modal (loads full restaurant with menu)
   const handleOpenRestaurant = async (restaurantId: string) => {
     try {
-      const res = await fetch(`/api/restaurants/${restaurantId}`);
-      if (res.ok) {
-        const fullRestaurant: Restaurant = await res.json();
+      const fullRestaurant = await ApiClient.getRestaurantById(restaurantId);
+      if (fullRestaurant) {
         setSelectedRestaurant(fullRestaurant);
       }
     } catch (err) {

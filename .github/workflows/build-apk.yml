@@ -1,0 +1,112 @@
+name: Build & Release Android APK
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build Web App
+        run: |
+          npm ci
+          npm run build
+
+      - name: Package Android WebView APK
+        run: |
+          mkdir -p android-build/src/com/aryansingh/foodie
+          cat << 'EOF' > android-build/AndroidManifest.xml
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+              package="com.aryansingh.foodie"
+              android:versionCode="1"
+              android:versionName="1.0.0">
+              <uses-permission android:name="android.permission.INTERNET" />
+              <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+              <application
+                  android:allowBackup="true"
+                  android:label="Foodie"
+                  android:supportsRtl="true"
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true"
+                      android:configChanges="orientation|screenSize">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          EOF
+
+          cat << 'EOF' > android-build/src/com/aryansingh/foodie/MainActivity.java
+          package com.aryansingh.foodie;
+          import android.app.Activity;
+          import android.os.Bundle;
+          import android.webkit.WebSettings;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
+
+          public class MainActivity extends Activity {
+              private WebView webView;
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  webView = new WebView(this);
+                  WebSettings s = webView.getSettings();
+                  s.setJavaScriptEnabled(true);
+                  s.setDomStorageEnabled(true);
+                  s.setDatabaseEnabled(true);
+                  webView.setWebViewClient(new WebViewClient());
+                  webView.loadUrl("https://foodie-teal-beta.vercel.app/");
+                  setContentView(webView);
+              }
+              @Override
+              public void onBackPressed() {
+                  if (webView != null && webView.canGoBack()) {
+                      webView.goBack();
+                  } else {
+                      super.onBackPressed();
+                  }
+              }
+          }
+          EOF
+
+          PLATFORM_DIR="$ANDROID_HOME/platforms/android-33"
+          BUILD_TOOLS_DIR=$(ls -d $ANDROID_HOME/build-tools/* | tail -1)
+
+          mkdir -p android-build/bin android-build/res android-build/gen
+          $BUILD_TOOLS_DIR/aapt package -f -m -J android-build/gen -M android-build/AndroidManifest.xml -S android-build/res -I $PLATFORM_DIR/android.jar
+          javac -d android-build/bin -cp $PLATFORM_DIR/android.jar android-build/gen/com/aryansingh/foodie/R.java android-build/src/com/aryansingh/foodie/MainActivity.java
+          $BUILD_TOOLS_DIR/d8 --output android-build/bin android-build/bin/com/aryansingh/foodie/*.class
+          $BUILD_TOOLS_DIR/aapt package -f -M android-build/AndroidManifest.xml -S android-build/res -I $PLATFORM_DIR/android.jar -F android-build/foodie-unaligned.apk
+          cd android-build && zip -u foodie-unaligned.apk bin/classes.dex && cd ..
+          $BUILD_TOOLS_DIR/zipalign -v -p 4 android-build/foodie-unaligned.apk foodie-v1.0.0.apk
+          
+          keytool -genkeypair -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Foodie, OU=Foodie, O=Foodie, L=Delhi, S=Delhi, C=IN"
+          $BUILD_TOOLS_DIR/apksigner sign --ks debug.keystore --ks-pass pass:android --ks-key-alias androiddebugkey --key-pass pass:android foodie-v1.0.0.apk
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: foodie-v1.0.0-apk
+          path: foodie-v1.0.0.apk

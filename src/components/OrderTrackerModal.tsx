@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, CheckCircle2, Clock, ChefHat, Bike, PackageCheck, RefreshCw, Search, Phone, ChevronRight } from 'lucide-react';
 import { Order, OrderStatus } from '../types.js';
+import { ApiClient, calculateSimulatedStatus } from '../data/apiClient.js';
 
 interface OrderTrackerModalProps {
   isOpen: boolean;
@@ -44,13 +45,26 @@ export const OrderTrackerModal: React.FC<OrderTrackerModalProps> = ({
     if (!phone) return;
     setIsLoadingHistory(true);
     try {
-      const res = await fetch(`/api/orders?phone=${encodeURIComponent(phone.trim())}`);
-      if (res.ok) {
+      const res = await fetch(`/api/orders?phone=${encodeURIComponent(phone.trim())}`, {
+        signal: AbortSignal.timeout(2000),
+      }).catch(() => null);
+
+      if (res && res.ok) {
         const data: Order[] = await res.json();
         setPhoneOrders(data);
         if (!currentOrder && data.length > 0) {
           setCurrentOrder(data[0]);
         }
+        return;
+      }
+
+      // Local fallback
+      const local = ApiClient.getLocalOrders().filter((o) =>
+        o.customer_phone.includes(phone.trim())
+      );
+      setPhoneOrders(local);
+      if (!currentOrder && local.length > 0) {
+        setCurrentOrder(local[0]);
       }
     } catch (err) {
       console.error('Error fetching orders:', err);
@@ -76,22 +90,33 @@ export const OrderTrackerModal: React.FC<OrderTrackerModalProps> = ({
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: nextStatus }),
-      });
+        signal: AbortSignal.timeout(2000),
+      }).catch(() => null);
 
-      if (res.ok) {
+      if (res && res.ok) {
         const updated: Order = await res.json();
         setCurrentOrder(updated);
         onSelectOrder(updated);
-        // Refresh history
+        ApiClient.saveLocalOrder(updated);
         if (updated.customer_phone) {
           fetchOrdersByPhone(updated.customer_phone);
         }
       } else {
-        const err = await res.json().catch(() => ({}));
-        setStatusMessage(err.detail || 'Failed to update status');
+        // Local state update fallback
+        const updated: Order = { ...currentOrder, status: nextStatus };
+        setCurrentOrder(updated);
+        onSelectOrder(updated);
+        ApiClient.saveLocalOrder(updated);
+        if (updated.customer_phone) {
+          fetchOrdersByPhone(updated.customer_phone);
+        }
       }
     } catch (err: any) {
-      setStatusMessage(err.message || 'Error updating status');
+      // Local fallback
+      const updated: Order = { ...currentOrder, status: nextStatus };
+      setCurrentOrder(updated);
+      onSelectOrder(updated);
+      ApiClient.saveLocalOrder(updated);
     } finally {
       setIsUpdatingStatus(false);
     }
