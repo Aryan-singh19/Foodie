@@ -1,0 +1,174 @@
+{
+  "theme": "Light",
+  "archetype": "1 (Organic & Earthy)",
+  "app_type": "mobile_web_app",
+  "domain": "Food Delivery App",
+  "colors": {
+    "background": "#FAF7F2",
+    "surface": "#FFFFFF",
+    "primary": "#E04D01",
+    "primary_hover": "#C74200",
+    "secondary": "#FFB800",
+    "text_primary": "#2D2422",
+    "text_secondary": "#6A5C58",
+    "border": "#EBE3D5",
+    "success": "#348A54",
+    "error": "#D93B3B",
+    "overlay": "rgba(45, 36, 34, 0.4)"
+  },
+  "typography": {
+    "heading_font": "Outfit",
+    "body_font": "Work Sans",
+    "scales": {
+      "h1": {
+        "fontSize": 32,
+        "lineHeight": 38,
+        "fontWeight": "800",
+        "letterSpacing": -0.5
+      },
+      "h2": {
+        "fontSize": 24,
+        "lineHeight": 30,
+        "fontWeight": "700",
+        "letterSpacing": -0.5
+      },
+      "h3": {
+        "fontSize": 20,
+        "lineHeight": 26,
+        "fontWeight": "600",
+        "letterSpacing": 0
+      },
+      "body": {
+        "fontSize": 16,
+        "lineHeight": 24,
+        "fontWeight": "400",
+        "letterSpacing": 0
+      },
+      "label": {
+        "fontSize": 12,
+        "lineHeight": 16,
+        "fontWeight": "600",
+        "textTransform": "uppercase",
+        "letterSpacing": 1.2
+      }
+    }
+  },
+  "spacing": {
+    "xs": 4,
+    "sm": 8,
+    "md": 16,
+    "lg": 24,
+    "xl": 32,
+    "xxl": 48
+  },
+  "borderRadius": {
+    "sm": 8,
+    "md": 16,
+    "lg": 24,
+    "full": 9999
+  },
+  "shadows": {
+    "sm": {
+      "shadowColor": "#2D2422",
+      "shadowOffset": { "width": 0, "height": 2 },
+      "shadowOpacity": 0.05,
+      "shadowRadius": 4,
+      "elevation": 2
+    },
+    "md": {
+      "shadowColor": "#2D2422",
+      "shadowOffset": { "width": 0, "height": 4 },
+      "shadowOpacity": 0.08,
+      "shadowRadius": 8,
+      "elevation": 4
+    }
+  },
+  "components": {
+    "button": {
+      "primary": {
+        "backgroundColor": "#E04D01",
+        "borderRadius": 16,
+        "paddingVertical": 16,
+        "paddingHorizontal": 24,
+        "alignItems": "center",
+        "justifyContent": "center"
+      },
+      "primary_text": {
+        "color": "#FFFFFF",
+        "fontFamily": "Outfit",
+        "fontWeight": "700",
+        "fontSize": 16
+      }
+    },
+    "card": {
+      "container": {
+        "backgroundColor": "#FFFFFF",
+        "borderRadius": 24,
+        "padding": 16,
+        "marginBottom": 16
+      }
+    },
+    "bottom_tab": {
+      "container": {
+        "backgroundColor": "#FFFFFF",
+        "borderTopColor": "#EBE3D5",
+        "borderTopWidth": 1,
+        "height": 80,
+        "paddingBottom": 24,
+        "paddingTop": 12
+      }
+    }
+  },
+  "layout_strategies": {
+    "general": "Use generous spacing (md/lg) between sections to let content breathe. Embrace the 'Organic & Earthy' vibe by relying on soft, large border radii (24px for main cards).",
+    "home_screen": "Horizontal ScrollViews for Categories (Street Food vs Regular). Vertical FlatList for nearby vendors. Use large, immersive imagery for the street food carts.",
+    "restaurant_detail": "Parallax header with large image of the food. Sticky category tabs below the header. Cardless list for menu items with subtle 1px border separators.",
+    "cart_checkout": "Clean, distraction-free layout. High contrast Primary CTA pinned to the bottom of the screen (absolute positioning or flex end)."
+  },
+  "image_urls": {
+    "hero_banner": {
+      "url": "https://images.pexels.com/photos/17223835/pexels-photo-17223835.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Authentic Indian street food platter, great for home screen header or 'Street Food' category hero.",
+      "category": "hero"
+    },
+    "category_samosa": {
+      "url": "https://images.unsplash.com/photo-1714799263348-41c7245cd714?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHwzfHxzYW1vc2ElMjBmb29kfGVufDB8fHx8MTc3NTk1MjU4M3ww&ixlib=rb-4.1.0&q=85",
+      "description": "Fried food (samosa/kachori vibe) for category thumbnails.",
+      "category": "thumbnail"
+    },
+    "category_spices": {
+      "url": "https://images.pexels.com/photos/618491/pexels-photo-618491.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Colorful display of spices, use for 'Explore Ingredients' or 'Local Flavors' banner.",
+      "category": "banner"
+    },
+    "delivery_tracking": {
+      "url": "https://images.unsplash.com/photo-1617194191528-9a50cf609304?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjV8MHwxfHNlYXJjaHwyfHxmb29kJTIwZGVsaXZlcnklMjBtYW58ZW58MHx8fHwxNzc1OTUyNTgzfDA&ixlib=rb-4.1.0&q=85",
+      "description": "Delivery man riding a motorcycle. Use on Order Tracking or Active Orders screen.",
+      "category": "tracking"
+    },
+    "vendor_profile": {
+      "url": "https://images.unsplash.com/photo-1728364283053-b1e2abe71611?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzJ8MHwxfHNlYXJjaHwzfHxpbmRpYW4lMjBzdHJlZXQlMjBmb29kfGVufDB8fHx8MTc3NTk1MjU4M3ww&ixlib=rb-4.1.0&q=85",
+      "description": "Man standing in front of street food table, perfect for cart vendor profile picture.",
+      "category": "profile"
+    }
+  },
+  "icons": {
+    "library": "@expo/vector-icons",
+    "recommendation": "Use Feather or Ionicons from @expo/vector-icons for clean, readable icons on mobile."
+  },
+  "accessibility": {
+    "contrast": "Ensure text against the Burnt Orange (#E04D01) primary color is pure White (#FFFFFF) to meet APCA contrast ratios.",
+    "touch_targets": "All interactive elements must have a minimum hit area of 44x44 points. Use hitSlop on TouchableOpacity when the visual element is smaller.",
+    "testing": "All interactive and key informational elements MUST include a `testID` attribute (React Native equivalent of data-testid). E.g., `testID=\"login-form-submit-button\"`"
+  },
+  "instructions_to_main_agent": [
+    "This is a React Native app. Do NOT use HTML/Tailwind classes (like div, p, mt-4). Use React Native components (View, Text, Image, ScrollView, FlatList) and StyleSheet.create().",
+    "Always apply testID (equivalent to data-testid) to TouchableOpacity, TextInput, and main View components for testing purposes.",
+    "Strictly follow the Archetype 1 (Organic & Earthy) color palette: #FAF7F2 background, #E04D01 primary. Avoid generic tech-blue.",
+    "Use 'Outfit' for headings and 'Work Sans' for body text. Load them via expo-google-fonts.",
+    "Images MUST be pulled from the provided image_urls. Do NOT use placeholder domains like via.placeholder.com. Ensure external images use the URI property in Image component.",
+    "For shadows, use the exact shadow configurations provided in the design guidelines (combining shadowColor, offset, opacity, radius, and elevation).",
+    "Keep border radii large (24px) for cards to give a soft, approachable feel suitable for food.",
+    "Implement horizontal scroll lists for categories to save vertical space, avoiding basic vertical list stacking everywhere."
+  ]
+}

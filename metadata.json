@@ -1,0 +1,6 @@
+{
+  "name": "Foodie",
+  "description": "Authentic street food and restaurant food delivery app with curated vendors, live order tracking, and custom menus.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
